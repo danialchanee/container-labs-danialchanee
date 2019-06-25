@@ -1,0 +1,6 @@
+FROM node:latest
+
+
+ENV APP_DIR=/server
+
+WORKDIR ${APP_DIR}
