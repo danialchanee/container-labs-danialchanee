@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: bggdbpvc
+  namespace: my-namespace
+  annotations:
+    volume.beta.kubernetes.io/storage-provisioner: "dobs.csi.digitalocean.com"
+
+spec:
+  accessModes: 
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: do-block-storage
+
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+
+# metadata:
+#    name: iss-bgg-db-deployment
+#    namespace: my-namespace
+
+# spec:
+#    replicas: 1
+#    selector:
+#       matchLabels: 
+#          name: stackupiss-bgg-db
+
+#    template:
+#       metadata:
+#          name:    
+#          labels:
+#             name: stackupiss-bgg-db
+#             version: "v1"
+#             owner: iss-danialchanee
+#       spec:
+#          containers:
+#          - name: fortune
+#            image: stackupiss/bgg-db:v1
+#            imagePullPolicy: Always
+#            env:
+#            - name: MYSQL_ROOT_PASSWORD
+#              value: "changeit"
+#            - name: MYSQL_DATABASE
+#              value: "bgg"
+#            ports:
+#            - name: bgg-db-port
+#              containerPort: 3306
+
+# ---
+
+# apiVersion: v1
+# kind: Service
+
+# metadata:
+#   name: bgg-db-svc
+#   namespace: my-namespace
+#   labels:
+#     name: bgg-db-svc
+  
+# spec:
+#   type: ClusterIP
+#   selector:
+#     name: stackupiss-bgg-db
+#   ports:
+#   - name: bgg-db-port-svc
+#     port: 3306
+#     targetPort: bgg-db-port

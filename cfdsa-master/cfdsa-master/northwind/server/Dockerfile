@@ -1,6 +1,6 @@
 FROM node:latest
 
-ENV DB_HOST=localhost DB_PORT=3306 DB_USER=root DB_PASSWORD=changeit APP_DIR=/server \
+ENV DB_HOST=danialdb DB_PORT=3306 DB_USER=root DB_PASSWORD=changeit APP_DIR=/server \
 APP_PORT=3000
 
 WORKDIR ${APP_DIR}

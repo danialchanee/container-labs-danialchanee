@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+
+kind: Ingress
+
+metadata:
+  name:  bggappingress
+  annotations: 
+    nginx.ingress.kubernetes.io/rewrite-target: "/"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /v1
+        backend: 
+          serviceName: bgg-app-svc.my-namespace.svc.cluster.local
+          servicePort: 80
+      paths:
+      - path: /
+        backend: 
+          serviceName: bgg-app-svc-v2.my-namespace.svc.cluster.local
+          servicePort: 8080

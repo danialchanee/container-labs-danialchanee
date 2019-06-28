@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+   name: iss-bgg-app-deployment-v2
+   namespace: my-namespace
+
+spec:
+   replicas: 2
+   selector:
+      matchLabels: 
+         name: stackupiss-app-db
+
+   template:
+      metadata:
+         name:    
+         labels:
+            name: stackupiss-app-db
+            version: "v2"
+            owner: iss-danialchanee
+      spec:
+         containers:
+         - name: fortune
+           image: stackupiss/bgg-app:v2
+           imagePullPolicy: Always
+           env:
+           - name: APP_PORT
+             value: "3000"
+           - name: APP_DIR
+             value: "/app"
+           - name: BGG_DB_HOST
+             value: "bgg-db-svc"
+           - name: BGG_DB_PORT
+             value: "3306"
+           - name: BGG_DB_USER
+             value: "root"
+           - name: BGG_DB_PASSWORD
+             value: "changeit"
+           ports:
+           - name: bgg-app-port
+             containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: bgg-app-svc-v2
+  namespace: my-namespace
+  labels:
+    name: bgg-app-svc-v2
+  
+spec:
+  type: ClusterIP
+  selector:
+    name: stackupiss-app-db
+    version: "v2"
+  ports:
+  - name: bgg-app-port-svc
+    port: 8080
+    targetPort: bgg-app-port
+
+

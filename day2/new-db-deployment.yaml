@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+   name: iss-bgg-db-deployment
+   namespace: my-namespace
+
+spec:
+   replicas: 1
+   selector:
+      matchLabels: 
+         name: stackupiss-bgg-db
+
+   template:
+      metadata:
+         name:    
+         labels:
+            name: stackupiss-bgg-db
+            version: "v1"
+            owner: iss-danialchanee
+      spec:
+        volumes:
+        - name : dbvol
+          persistentVolumeClaim:
+            claimName: bggdbpvc
+        initContainers:
+        - name: mydb-vol-scrub
+          image: busybox
+          command: ["/bin/sh", "-c", "test -e /scrub && rm -rf /scrub/..?* /scrub/.[!.]* /scrub/*  && test -z \"$(ls -A /scrub)\" || exit 1"]
+          volumeMounts:
+          - name: dbvol
+            mountPath: /scrub
+        containers:
+        - name: fortune
+          image: stackupiss/bgg-db:v1
+          imagePullPolicy: Always
+          env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: "changeit"
+          - name: MYSQL_DATABASE
+            value: "bgg"
+          ports:
+          - name: bgg-db-port
+            containerPort: 3306
+          volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: dbvol
+
+---
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: bgg-db-svc
+  namespace: my-namespace
+  labels:
+    name: bgg-db-svc
+  
+spec:
+  type: ClusterIP
+  selector:
+    name: stackupiss-bgg-db
+  ports:
+  - name: bgg-db-port-svc
+    port: 3306
+    targetPort: bgg-db-port

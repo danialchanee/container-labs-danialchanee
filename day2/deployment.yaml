@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+   name: fortune-deployment
+   namespace: my-namespace
+
+spec:
+   replicas: 2
+   selector:
+      matchLabels: 
+         name: fortune-pod
+
+   template:
+      metadata:
+         name: fortune-pod
+         labels:
+            name: fortune-pod
+            version: "v1"
+            owner: danialchanee
+      spec:
+         containers:
+         - name: fortune
+           image: danialchanee/fortune
+           imagePullPolicy: Always
+           env:
+           - name: APP_PORT
+             value: "3000"
+           ports:
+           - name: fortune-port
+             containerPort: 3000
+
